@@ -1,0 +1,28 @@
+{
+  "name": "matjestick/fleet-test",
+  "type": "project",
+  "license": "proprietary",
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Mathieu Deias",
+      "email": "deias.mathieu@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "FleetVehicle\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^8.0"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": {
+      "*": "dist"
+    },
+    "sort-packages": true
+  }
+}
