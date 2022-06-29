@@ -16,7 +16,7 @@ final class Vehicle
      */
     private array $fleets = [];
 
-    public function __construct(?UuidInterface $id = null)
+    public function __construct(?UuidInterface $id = null, private ?float $latitude = null, private ?float $longitude = null)
     {
         $this->id = $id ?? Uuid::uuid4();
     }
@@ -49,5 +49,21 @@ final class Vehicle
         }
 
         return false;
+    }
+
+    public function park(float $latitude, float $longitude): self
+    {
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, float|null>
+     */
+    public function getCoordinates(): array
+    {
+        return ['latitude' => $this->latitude, 'longitude' => $this->longitude];
     }
 }

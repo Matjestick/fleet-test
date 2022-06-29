@@ -25,6 +25,10 @@ final class FeatureContext implements Context
     private FleetCommands $fleetCommands;
     private VehicleCommands $vehicleCommands;
     private VehicleQueries $vehicleQueries;
+    /**
+     * @var float[]
+     */
+    private array $location;
 
     /**
      * @param \Exception[] $exceptions
@@ -32,10 +36,11 @@ final class FeatureContext implements Context
     public function __construct(private array $exceptions = [])
     {
         $fleetRepository = new InMemoryFleetRepository();
+        $vehicleRepository = new InMemoryVehicleRepository();
         $this->fleetQueries = new FleetQueries($fleetRepository);
         $this->fleetCommands = new FleetCommands($fleetRepository);
-        $this->vehicleCommands = new VehicleCommands(new InMemoryVehicleRepository());
-        $this->vehicleQueries = new VehicleQueries(new InMemoryVehicleRepository());
+        $this->vehicleCommands = new VehicleCommands($vehicleRepository);
+        $this->vehicleQueries = new VehicleQueries($vehicleRepository);
     }
 
     /**
@@ -63,12 +68,28 @@ final class FeatureContext implements Context
     }
 
     /**
+     * @Given a location
+     */
+    public function aLocation(): void
+    {
+        $this->location = ['latitude' => 10.049567988755534, 'longitude' => 53.462766759577057];
+    }
+
+    /**
      * @Given I have registered this vehicle into my fleet
      * @When I register this vehicle into my fleet
      */
     public function iRegisterThisVehicleIntoMyFleet(): void
     {
         $this->registerVehicleIntoFleet($this->vehicle->getId(), $this->myFleet->getId());
+    }
+
+    /**
+     * @Given this vehicle has been registered into the other user's fleet
+     */
+    public function thisVehicleHasBeenRegisteredIntoTheOtherUserSFleet(): void
+    {
+        $this->registerVehicleIntoFleet($this->vehicle->getId(), $this->otherFleet->getId());
     }
 
     /**
@@ -90,11 +111,11 @@ final class FeatureContext implements Context
     }
 
     /**
-     * @Given this vehicle has been registered into the other user's fleet
+     * @When I park my vehicle at this location
      */
-    public function thisVehicleHasBeenRegisteredIntoTheOtherUserSFleet(): void
+    public function iParkMyVehicleAtThisLocation(): void
     {
-        $this->registerVehicleIntoFleet($this->vehicle->getId(), $this->otherFleet->getId());
+        $this->vehicleCommands->park($this->vehicle->getId(), $this->location['latitude'], $this->location['longitude']);
     }
 
     /**
@@ -112,6 +133,14 @@ final class FeatureContext implements Context
     {
         \PHPUnit\Framework\Assert::assertInstanceOf(FleetAlreadyHasVehicleException::class, $this->exceptions[0]);
         \PHPUnit\Framework\Assert::assertInstanceOf(VehicleAlreadyInFleetException::class, $this->exceptions[1]);
+    }
+
+    /**
+     * @Then the known location of my vehicle should verify this location
+     */
+    public function theKnownLocationOfMyVehicleShouldVerifyThisLocation(): void
+    {
+        \PHPUnit\Framework\Assert::assertEquals($this->location, $this->vehicleQueries->getCoordinates($this->vehicle->getId()));
     }
 
     private function registerVehicleIntoFleet(UuidInterface $vehicleId, UuidInterface $fleetId): void

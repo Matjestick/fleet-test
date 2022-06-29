@@ -40,14 +40,14 @@ final class InMemoryVehicleRepository implements VehicleRepositoryInterface
 
     public function persist(Vehicle $vehicle): void
     {
-        foreach ($this->vehicles as &$existingFleet) {
-            if (0 === $existingFleet->getId()->compareTo($vehicle->getId())) {
-                $existingFleet = $vehicle;
+        foreach ($this->vehicles as &$existingVehicle) {
+            if (0 === $existingVehicle->getId()->compareTo($vehicle->getId())) {
+                $existingVehicle = $vehicle;
 
                 return;
             }
         }
-        unset($existingFleet);
+        unset($existingVehicle);
 
         $this->vehicles[] = $vehicle;
     }

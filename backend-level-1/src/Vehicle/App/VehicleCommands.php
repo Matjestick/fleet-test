@@ -25,4 +25,14 @@ final class VehicleCommands
         $vehicle->joinFleet($fleetId);
         $this->vehicleRepository->persist($vehicle);
     }
+
+    /**
+     * @throws VehicleNotFoundException
+     */
+    public function park(UuidInterface $vehicleId, float $latitude, float $longitude): void
+    {
+        $vehicle = $this->vehicleRepository->find($vehicleId);
+        $vehicle->park($latitude, $longitude);
+        $this->vehicleRepository->persist($vehicle);
+    }
 }

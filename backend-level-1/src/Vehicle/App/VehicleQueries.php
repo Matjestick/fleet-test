@@ -22,4 +22,12 @@ final class VehicleQueries
     {
         return $this->vehicleRepository->find($vehicleId);
     }
+
+    /**
+     * @return array<string, float|null>
+     */
+    public function getCoordinates(UuidInterface $vehicleId): array
+    {
+        return ($this->findVehicle($vehicleId))->getCoordinates();
+    }
 }
