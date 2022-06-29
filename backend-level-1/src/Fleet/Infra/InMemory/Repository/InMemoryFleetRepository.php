@@ -21,6 +21,7 @@ final class InMemoryFleetRepository implements FleetRepositoryInterface
     {
         $this->fleets = [
             new Fleet(Uuid::fromString('d4d6d0c2-343d-46e8-a450-316d637777bf')),
+            new Fleet(Uuid::fromString('8a158ebe-e20c-46be-a9f5-61ce13d5a771')),
         ];
     }
 

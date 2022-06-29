@@ -18,12 +18,13 @@ use Ramsey\Uuid\UuidInterface;
 
 final class FeatureContext implements Context
 {
-    private UuidInterface $myUserId;
     private Fleet $myFleet;
+    private Fleet $otherFleet;
     private FleetQueries $fleetQueries;
     private Vehicle $vehicle;
     private FleetCommands $fleetCommands;
     private VehicleCommands $vehicleCommands;
+    private VehicleQueries $vehicleQueries;
 
     /**
      * @param \Exception[] $exceptions
@@ -31,7 +32,6 @@ final class FeatureContext implements Context
     public function __construct(private array $exceptions = [])
     {
         $fleetRepository = new InMemoryFleetRepository();
-        $this->myUserId = Uuid::fromString('d4d6d0c2-343d-46e8-a450-316d637777bf');
         $this->fleetQueries = new FleetQueries($fleetRepository);
         $this->fleetCommands = new FleetCommands($fleetRepository);
         $this->vehicleCommands = new VehicleCommands(new InMemoryVehicleRepository());
@@ -43,7 +43,15 @@ final class FeatureContext implements Context
      */
     public function myFleet(): void
     {
-        $this->myFleet = $this->fleetQueries->findUserFleet($this->myUserId);
+        $this->myFleet = $this->fleetQueries->findUserFleet(Uuid::fromString('d4d6d0c2-343d-46e8-a450-316d637777bf'));
+    }
+
+    /**
+     * @Given the fleet of another user
+     */
+    public function theFleetOfAnotherUser(): void
+    {
+        $this->otherFleet = $this->fleetQueries->findUserFleet(Uuid::fromString('8a158ebe-e20c-46be-a9f5-61ce13d5a771'));
     }
 
     /**
@@ -57,9 +65,16 @@ final class FeatureContext implements Context
     /**
      * @Given I have registered this vehicle into my fleet
      * @When I register this vehicle into my fleet
-     * @When I try to register this vehicle into my fleet
      */
     public function iRegisterThisVehicleIntoMyFleet(): void
+    {
+        $this->registerVehicleIntoFleet($this->vehicle->getId(), $this->myFleet->getId());
+    }
+
+    /**
+     * @When I try to register this vehicle into my fleet
+     */
+    public function iTryToRegisterThisVehicleIntoMyFleet(): void
     {
         try {
             $this->fleetCommands->registerVehicle($this->vehicle->getId(), $this->myFleet->getId());
@@ -72,6 +87,14 @@ final class FeatureContext implements Context
         } catch (VehicleAlreadyInFleetException $exception) {
             $this->exceptions[] = $exception;
         }
+    }
+
+    /**
+     * @Given this vehicle has been registered into the other user's fleet
+     */
+    public function thisVehicleHasBeenRegisteredIntoTheOtherUserSFleet(): void
+    {
+        $this->registerVehicleIntoFleet($this->vehicle->getId(), $this->otherFleet->getId());
     }
 
     /**
@@ -89,5 +112,11 @@ final class FeatureContext implements Context
     {
         \PHPUnit\Framework\Assert::assertInstanceOf(FleetAlreadyHasVehicleException::class, $this->exceptions[0]);
         \PHPUnit\Framework\Assert::assertInstanceOf(VehicleAlreadyInFleetException::class, $this->exceptions[1]);
+    }
+
+    private function registerVehicleIntoFleet(UuidInterface $vehicleId, UuidInterface $fleetId): void
+    {
+        $this->fleetCommands->registerVehicle($vehicleId, $fleetId);
+        $this->vehicleCommands->joinFleet($vehicleId, $fleetId);
     }
 }
