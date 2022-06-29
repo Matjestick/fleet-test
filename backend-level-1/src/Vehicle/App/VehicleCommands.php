@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FleetVehicle\Vehicle\App;
 
+use FleetVehicle\Vehicle\Domain\Exception\VehicleAlreadyInFleetException;
 use FleetVehicle\Vehicle\Domain\Exception\VehicleNotFoundException;
 use FleetVehicle\Vehicle\Domain\Repository\VehicleRepositoryInterface;
 use Ramsey\Uuid\UuidInterface;
@@ -16,6 +17,7 @@ final class VehicleCommands
 
     /**
      * @throws VehicleNotFoundException
+     * @throws VehicleAlreadyInFleetException
      */
     public function joinFleet(UuidInterface $vehicleId, UuidInterface $fleetId): void
     {

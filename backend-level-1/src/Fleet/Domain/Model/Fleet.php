@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FleetVehicle\Fleet\Domain\Model;
 
+use FleetVehicle\Fleet\Domain\Exception\FleetAlreadyHasVehicleException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -31,8 +32,15 @@ final class Fleet
         return $this->user;
     }
 
+    /**
+     * @throws FleetAlreadyHasVehicleException
+     */
     public function registerVehicle(UuidInterface $vehicle): self
     {
+        if ($this->hasVehicle($vehicle)) {
+            throw new FleetAlreadyHasVehicleException(sprintf('Fleet already has vehicles %s', $vehicle->toString()));
+        }
+
         $this->vehicles[] = $vehicle;
 
         return $this;
