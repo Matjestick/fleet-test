@@ -12,3 +12,5 @@ shell:
 	$(DCR) app bash
 behat: vendor
 	$(DCR) app vendor/bin/behat
+cloc:
+	docker run --rm -v $(PROJECT_DIR):/tmp aldanial/cloc --exclude-dir=vendor .
