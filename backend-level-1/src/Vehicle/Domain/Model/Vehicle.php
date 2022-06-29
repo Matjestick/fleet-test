@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FleetVehicle\Vehicle\Domain\Model;
 
+use FleetVehicle\Vehicle\Domain\Exception\VehicleAlreadyAtLocation;
 use FleetVehicle\Vehicle\Domain\Exception\VehicleAlreadyInFleetException;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -51,8 +52,14 @@ final class Vehicle
         return false;
     }
 
+    /**
+     * @throws VehicleAlreadyAtLocation
+     */
     public function park(float $latitude, float $longitude): self
     {
+        if ($this->getCoordinates() === ['latitude' => $latitude, 'longitude' => $longitude]) {
+            throw new VehicleAlreadyAtLocation(sprintf('Vehicle already parked at %s, %s', $latitude, $longitude));
+        }
         $this->latitude = $latitude;
         $this->longitude = $longitude;
 

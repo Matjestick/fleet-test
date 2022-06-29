@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FleetVehicle\Vehicle\App;
 
+use FleetVehicle\Vehicle\Domain\Exception\VehicleAlreadyAtLocation;
 use FleetVehicle\Vehicle\Domain\Exception\VehicleAlreadyInFleetException;
 use FleetVehicle\Vehicle\Domain\Exception\VehicleNotFoundException;
 use FleetVehicle\Vehicle\Domain\Repository\VehicleRepositoryInterface;
@@ -28,6 +29,7 @@ final class VehicleCommands
 
     /**
      * @throws VehicleNotFoundException
+     * @throws VehicleAlreadyAtLocation
      */
     public function park(UuidInterface $vehicleId, float $latitude, float $longitude): void
     {

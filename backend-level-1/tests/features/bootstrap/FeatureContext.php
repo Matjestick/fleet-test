@@ -10,6 +10,7 @@ use FleetVehicle\Fleet\Domain\Model\Fleet;
 use FleetVehicle\Fleet\Infra\InMemory\Repository\InMemoryFleetRepository;
 use FleetVehicle\Vehicle\App\VehicleCommands;
 use FleetVehicle\Vehicle\App\VehicleQueries;
+use FleetVehicle\Vehicle\Domain\Exception\VehicleAlreadyAtLocation;
 use FleetVehicle\Vehicle\Domain\Exception\VehicleAlreadyInFleetException;
 use FleetVehicle\Vehicle\Domain\Model\Vehicle;
 use FleetVehicle\Vehicle\Infra\InMemory\Repository\InMemoryVehicleRepository;
@@ -111,11 +112,24 @@ final class FeatureContext implements Context
     }
 
     /**
+     * @Given my vehicle has been parked into this location
      * @When I park my vehicle at this location
      */
     public function iParkMyVehicleAtThisLocation(): void
     {
         $this->vehicleCommands->park($this->vehicle->getId(), $this->location['latitude'], $this->location['longitude']);
+    }
+
+    /**
+     * @When I try to park my vehicle at this location
+     */
+    public function iTryToParkMyVehicleAtThisLocation(): void
+    {
+        try {
+            $this->vehicleCommands->park($this->vehicle->getId(), $this->location['latitude'], $this->location['longitude']);
+        } catch (VehicleAlreadyAtLocation $exception) {
+            $this->exceptions[] = $exception;
+        }
     }
 
     /**
@@ -141,6 +155,14 @@ final class FeatureContext implements Context
     public function theKnownLocationOfMyVehicleShouldVerifyThisLocation(): void
     {
         \PHPUnit\Framework\Assert::assertEquals($this->location, $this->vehicleQueries->getCoordinates($this->vehicle->getId()));
+    }
+
+    /**
+     * @Then I should be informed that my vehicle is already parked at this location
+     */
+    public function iShouldBeInformedThatMyVehicleIsAlreadyParkedAtThisLocation(): void
+    {
+        \PHPUnit\Framework\Assert::assertInstanceOf(VehicleAlreadyAtLocation::class, $this->exceptions[0]);
     }
 
     private function registerVehicleIntoFleet(UuidInterface $vehicleId, UuidInterface $fleetId): void
