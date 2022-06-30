@@ -1,0 +1,22 @@
+includes:
+    - /tools/.composer/vendor-bin/phpstan/vendor/phpstan/phpstan-doctrine/extension.neon
+    - /tools/.composer/vendor-bin/phpstan/vendor/phpstan/phpstan-symfony/extension.neon
+
+parameters:
+    level: max
+
+    paths:
+        - src/
+        - tests/
+
+    inferPrivatePropertyTypeFromConstructor: true
+
+    scanDirectories:
+        - src/Fleet/Infra/Doctrine/ORM/Migrations
+        - src/Vehicle/Infra/Doctrine/ORM/Migrations
+
+    doctrine:
+        objectManagerLoader: tests/object-manager.php
+
+    symfony:
+        container_xml_path: '%currentWorkingDirectory%/var/cache/dev/FleetVehicle_KernelDevDebugContainer.xml'

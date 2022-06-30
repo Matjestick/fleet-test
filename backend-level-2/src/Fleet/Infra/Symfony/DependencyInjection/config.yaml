@@ -1,0 +1,24 @@
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    FleetVehicle\Fleet\:
+        resource: '%kernel.project_dir%/src/Fleet/*'
+        exclude:
+            - '%kernel.project_dir%/src/Fleet/Domain/Model'
+doctrine:
+  orm:
+    mappings:
+        FleetVehicle\Fleet:
+            is_bundle: false
+            type: xml
+            dir: '%kernel.project_dir%/src/Fleet/Infra/Doctrine/ORM/Mapping'
+            prefix: 'FleetVehicle\Fleet\Domain\Model'
+            alias: Fleet
+
+doctrine_migrations:
+    migrations_paths:
+        'FleetVehicle\Fleet\Infra\Doctrine\ORM\Migrations': '%kernel.project_dir%/src/Fleet/Infra/Doctrine/ORM/Migrations'

@@ -1,0 +1,41 @@
+version: '3.9'
+services:
+    app:
+        build:
+            context: ./docker/php
+        volumes:
+            - .:/var/www
+            - ~/.composer/cache:/root/.composer/cache:cached
+        depends_on:
+            database:
+                condition: service_healthy
+
+###> doctrine/doctrine-bundle ###
+    database:
+        image: postgres:${POSTGRES_VERSION:-13}-alpine
+        env_file:
+            - .env
+        environment:
+          POSTGRES_DB: ${POSTGRES_DB:-app}
+          # You should definitely change the password in production
+          POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
+          POSTGRES_USER: ${POSTGRES_USER:-symfony}
+        volumes:
+          - ./docker/db/data:/var/lib/postgresql/data:rw
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-symfony}" ]
+            timeout: 2s
+            retries: 5
+            interval: 5s
+###< doctrine/doctrine-bundle ###
+
+    qa:
+        image: jakzal/phpqa:php8.0
+        working_dir: /var/www
+        volumes:
+            - .:/var/www
+
+volumes:
+###> doctrine/doctrine-bundle ###
+    db-data:
+###< doctrine/doctrine-bundle ###

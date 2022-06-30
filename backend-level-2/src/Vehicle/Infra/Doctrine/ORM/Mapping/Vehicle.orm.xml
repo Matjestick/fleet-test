@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping
+        xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
+>
+    <entity name="FleetVehicle\Vehicle\Domain\Model\Vehicle" table="vehicle">
+        <id name="id" type="uuid">
+            <generator strategy="NONE"/>
+        </id>
+        <field name="fleets" type="simple_array" nullable="true"/>
+        <field name="latitude" type="decimal" precision="20" scale="16" nullable="true"/>
+        <field name="longitude" type="decimal" precision="20" scale="16" nullable="true"/>
+        <field name="altitude" type="decimal" precision="20" scale="16" nullable="true"/>
+    </entity>
+</doctrine-mapping>

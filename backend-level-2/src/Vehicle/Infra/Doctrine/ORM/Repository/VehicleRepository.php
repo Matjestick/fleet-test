@@ -1,0 +1,43 @@
+<?php
+
+declare(strict_types=1);
+
+namespace FleetVehicle\Vehicle\Infra\Doctrine\ORM\Repository;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use FleetVehicle\Vehicle\Domain\Exception\VehicleNotFoundException;
+use FleetVehicle\Vehicle\Domain\Model\Vehicle;
+use FleetVehicle\Vehicle\Domain\Repository\VehicleRepositoryInterface;
+use Symfony\Component\Uid\Uuid;
+
+final class VehicleRepository implements VehicleRepositoryInterface
+{
+    /**
+     * @var EntityRepository<Vehicle>
+     */
+    private EntityRepository $repository;
+
+    public function __construct(private EntityManagerInterface $em)
+    {
+        $this->repository = $this->em->getRepository(Vehicle::class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function find(Uuid $vehicle): Vehicle
+    {
+        if (!($savedVehicle = $this->repository->find($vehicle)) instanceof Vehicle) {
+            throw new VehicleNotFoundException(sprintf('No vehicle found for id %s', $vehicle));
+        }
+
+        return $savedVehicle;
+    }
+
+    public function persist(Vehicle $vehicle): void
+    {
+        $this->em->persist($vehicle);
+        $this->em->flush();
+    }
+}

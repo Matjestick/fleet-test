@@ -1,0 +1,11 @@
+imports:
+    - { resource: '../src/**/Infra/Symfony/DependencyInjection/*.{yaml}' }
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    FleetVehicle\Tests\Behat\:
+        resource: '../tests/Behat/*'
