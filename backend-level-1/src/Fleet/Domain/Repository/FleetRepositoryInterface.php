@@ -23,5 +23,5 @@ interface FleetRepositoryInterface
     /**
      * @throws FleetNotFoundException
      */
-    public function persist(Fleet $fleet);
+    public function persist(Fleet $fleet): void;
 }
