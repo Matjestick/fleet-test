@@ -20,8 +20,5 @@ interface FleetRepositoryInterface
      */
     public function findByUser(UuidInterface $user): Fleet;
 
-    /**
-     * @throws FleetNotFoundException
-     */
     public function persist(Fleet $fleet): void;
 }
