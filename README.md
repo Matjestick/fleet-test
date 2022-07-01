@@ -10,3 +10,4 @@
 ## DDD & CQS
 
 - [Level 1](backend-level-1/ddd-and-cqs-level-1.md)
+- [Level 2](backend-level-2/ddd-and-cqs-level-2.md)
