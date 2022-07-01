@@ -23,4 +23,9 @@ interface VehicleRepositoryInterface
     public function findByPlate(string $vehiclePlate): Vehicle;
 
     public function create(string $vehiclePlate): Vehicle;
+
+    /**
+     * @throws VehicleNotFoundException
+     */
+    public function findByFromFleetAndPlate(Uuid $fleetId, string $plateNumber): Vehicle;
 }

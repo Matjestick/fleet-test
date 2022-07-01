@@ -38,4 +38,12 @@ final class VehicleQueries
     {
         return $this->vehicleRepository->findByPlate($vehiclePlate);
     }
+
+    /**
+     * @throws VehicleNotFoundException
+     */
+    public function findVehicleFromFleetAndPlate(Uuid $fleetId, string $plateNumber): Vehicle
+    {
+        return $this->vehicleRepository->findByFromFleetAndPlate($fleetId, $plateNumber);
+    }
 }

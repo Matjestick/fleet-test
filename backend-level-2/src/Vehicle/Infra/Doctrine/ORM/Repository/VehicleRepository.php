@@ -44,6 +44,18 @@ final class VehicleRepository implements VehicleRepositoryInterface
         return $savedVehicle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function findByFromFleetAndPlate(Uuid $fleetId, string $plateNumber): Vehicle
+    {
+        if (!($savedVehicle = $this->repository->findOneBy(['fleets' => [$fleetId], 'plateNumber' => $plateNumber])) instanceof Vehicle) {
+            throw new VehicleNotFoundException(sprintf('No vehicle found for plate number %s registered in fleet %s', $plateNumber, $fleetId));
+        }
+
+        return $savedVehicle;
+    }
+
     public function create(string $vehiclePlate): Vehicle
     {
         return new Vehicle($vehiclePlate);
