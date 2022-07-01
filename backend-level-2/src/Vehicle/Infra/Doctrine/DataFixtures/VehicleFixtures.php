@@ -15,7 +15,7 @@ class VehicleFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $vehicle = new Vehicle(Uuid::fromString(self::VEHICLE_ID));
+        $vehicle = new Vehicle('PLATE-NUMBER', Uuid::fromString(self::VEHICLE_ID));
 
         $manager->persist($vehicle);
         $manager->flush();

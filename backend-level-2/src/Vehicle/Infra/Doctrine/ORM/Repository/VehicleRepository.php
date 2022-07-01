@@ -35,6 +35,20 @@ final class VehicleRepository implements VehicleRepositoryInterface
         return $savedVehicle;
     }
 
+    public function findByPlate(string $vehiclePlate): Vehicle
+    {
+        if (!($savedVehicle = $this->repository->findOneBy(['plateNumber' => $vehiclePlate])) instanceof Vehicle) {
+            throw new VehicleNotFoundException(sprintf('No vehicle found for plate number %s', $vehiclePlate));
+        }
+
+        return $savedVehicle;
+    }
+
+    public function create(string $vehiclePlate): Vehicle
+    {
+        return new Vehicle($vehiclePlate);
+    }
+
     public function persist(Vehicle $vehicle): void
     {
         $this->em->persist($vehicle);

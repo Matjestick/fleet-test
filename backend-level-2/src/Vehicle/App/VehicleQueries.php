@@ -30,4 +30,12 @@ final class VehicleQueries
     {
         return ($this->findVehicle($vehicleId))->getCoordinates();
     }
+
+    /**
+     * @throws VehicleNotFoundException
+     */
+    public function findVehicleFromPlate(string $vehiclePlate): Vehicle
+    {
+        return $this->vehicleRepository->findByPlate($vehiclePlate);
+    }
 }

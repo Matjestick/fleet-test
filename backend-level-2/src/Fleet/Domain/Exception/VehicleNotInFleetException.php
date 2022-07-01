@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace FleetVehicle\Fleet\Domain\Exception;
 
-final class VehicleNotInFleetException extends \RuntimeException
+final class VehicleNotInFleetException extends FleetException
 {
 }

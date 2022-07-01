@@ -17,7 +17,6 @@ use FleetVehicle\Fleet\Infra\Doctrine\DataFixtures\FleetFixtures;
 use FleetVehicle\Vehicle\App\VehicleCommands;
 use FleetVehicle\Vehicle\App\VehicleQueries;
 use FleetVehicle\Vehicle\Domain\Exception\VehicleAlreadyAtLocation;
-use FleetVehicle\Vehicle\Domain\Exception\VehicleAlreadyInFleetException;
 use FleetVehicle\Vehicle\Domain\Model\Vehicle;
 use FleetVehicle\Vehicle\Infra\Doctrine\DataFixtures\VehicleFixtures;
 use Symfony\Component\Uid\Uuid;
@@ -32,6 +31,7 @@ final class FeatureContext implements Context
      * @var string[]
      */
     private array $location;
+    private string $plateNumber;
 
     /**
      * @param \Exception[] $exceptions
@@ -64,8 +64,15 @@ final class FeatureContext implements Context
      */
     public function fleetFixtures(): void
     {
-        (new VehicleFixtures())->load($this->entityManager);
         (new FleetFixtures())->load($this->entityManager);
+    }
+
+    /**
+     * @BeforeScenario @vehicleFixtures
+     */
+    public function vehicleFixtures(): void
+    {
+        (new VehicleFixtures())->load($this->entityManager);
     }
 
     /**
@@ -109,12 +116,20 @@ final class FeatureContext implements Context
     }
 
     /**
+     * @Given a plate number
+     */
+    public function aPlateNumber(): void
+    {
+        $this->plateNumber = 'Plate-number';
+    }
+
+    /**
      * @Given I have registered this vehicle into my fleet
      * @When I register this vehicle into my fleet
      */
     public function iRegisterThisVehicleIntoMyFleet(): void
     {
-        $this->registerVehicleIntoFleet($this->vehicle->getId(), $this->myFleet->getId());
+        $this->fleetCommands->registerVehicle($this->vehicle->getId(), $this->myFleet->getId());
     }
 
     /**
@@ -122,7 +137,7 @@ final class FeatureContext implements Context
      */
     public function thisVehicleHasBeenRegisteredIntoTheOtherUserSFleet(): void
     {
-        $this->registerVehicleIntoFleet($this->vehicle->getId(), $this->otherFleet->getId());
+        $this->fleetCommands->registerVehicle($this->vehicle->getId(), $this->otherFleet->getId());
     }
 
     /**
@@ -135,10 +150,16 @@ final class FeatureContext implements Context
         } catch (FleetAlreadyHasVehicleException $exception) {
             $this->exceptions[] = $exception;
         }
+    }
 
+    /**
+     * @When I try to register this vehicle by plate number into my fleet
+     */
+    public function iTryToRegisterThisVehicleByPlateNumberIntoMyFleet(): void
+    {
         try {
-            $this->vehicleCommands->joinFleet($this->vehicle->getId(), $this->myFleet->getId());
-        } catch (VehicleAlreadyInFleetException $exception) {
+            $this->fleetCommands->registerVehicleFromPlateNumber($this->myFleet->getId(), $this->plateNumber);
+        } catch (FleetAlreadyHasVehicleException $exception) {
             $this->exceptions[] = $exception;
         }
     }
@@ -159,6 +180,15 @@ final class FeatureContext implements Context
     public function iCreateAFleetForThisUser(): void
     {
         $this->fleetCommands->createFleet($this->user);
+    }
+
+    /**
+     * @Given I have registered this vehicle by plate number into my fleet
+     * @When I register this vehicle by plate number into my fleet
+     */
+    public function iRegisterThisVehicleByPlateNumberIntoMyFleet(): void
+    {
+        $this->fleetCommands->registerVehicleFromPlateNumber($this->myFleet->getId(), $this->plateNumber);
     }
 
     /**
@@ -199,7 +229,6 @@ final class FeatureContext implements Context
     public function iShouldBeInformedThisVehicleHasAlreadyBeenRegisteredIntoMyFleet(): void
     {
         \PHPUnit\Framework\Assert::assertInstanceOf(FleetAlreadyHasVehicleException::class, $this->exceptions[0]);
-        \PHPUnit\Framework\Assert::assertInstanceOf(VehicleAlreadyInFleetException::class, $this->exceptions[1]);
     }
 
     /**
@@ -234,9 +263,19 @@ final class FeatureContext implements Context
         \PHPUnit\Framework\Assert::assertInstanceOf(UserAlreadyHasFleet::class, $this->exceptions[0]);
     }
 
-    private function registerVehicleIntoFleet(Uuid $vehicleId, Uuid $fleetId): void
+    /**
+     * @Then this vehicle has been created
+     */
+    public function thisVehicleHasBeenCreated(): void
     {
-        $this->fleetCommands->registerVehicle($vehicleId, $fleetId);
-        $this->vehicleCommands->joinFleet($vehicleId, $fleetId);
+        \PHPUnit\Framework\Assert::assertInstanceOf(Vehicle::class, $this->vehicleQueries->findVehicleFromPlate($this->plateNumber));
+    }
+
+    /**
+     * @Given this plate number should be part of my fleet
+     */
+    public function thisPlateNumberShouldBePartOfMyFleet(): void
+    {
+        $this->fleetQueries->fleetHasVehicle($this->myFleet->getId(), $this->vehicleQueries->findVehicleFromPlate($this->plateNumber)->getId());
     }
 }

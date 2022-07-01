@@ -16,7 +16,7 @@ final class Vehicle
      */
     private array $fleets = [];
 
-    public function __construct(?Uuid $id = null, private ?string $latitude = null, private ?string $longitude = null, private ?string $altitude = null)
+    public function __construct(private string $plateNumber, ?Uuid $id = null, private ?string $latitude = null, private ?string $longitude = null, private ?string $altitude = null)
     {
         $this->id = $id ?? Uuid::v4();
     }
@@ -24,6 +24,11 @@ final class Vehicle
     public function getId(): Uuid
     {
         return $this->id;
+    }
+
+    public function getPlateNumber(): string
+    {
+        return $this->plateNumber;
     }
 
     /**

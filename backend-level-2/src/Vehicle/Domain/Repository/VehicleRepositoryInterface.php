@@ -16,4 +16,11 @@ interface VehicleRepositoryInterface
     public function find(Uuid $vehicle): Vehicle;
 
     public function persist(Vehicle $vehicle): void;
+
+    /**
+     * @throws VehicleNotFoundException
+     */
+    public function findByPlate(string $vehiclePlate): Vehicle;
+
+    public function create(string $vehiclePlate): Vehicle;
 }

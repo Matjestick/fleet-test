@@ -37,4 +37,9 @@ final class VehicleCommands
         $vehicle->park($latitude, $longitude, $altitude);
         $this->vehicleRepository->persist($vehicle);
     }
+
+    public function registerVehicle(string $vehiclePlate): void
+    {
+        $this->vehicleRepository->persist($this->vehicleRepository->create($vehiclePlate));
+    }
 }

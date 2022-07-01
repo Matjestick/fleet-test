@@ -6,9 +6,15 @@ ACTION="$1"
 case $ACTION in
   create)
     docker-compose run --rm app bin/console fleet-vehicle:fleet:create "$2"
-    docker-compose down --remove-orphan
+    docker-compose down --remove-orphans
     ;;
+  register-vehicle)
+    docker-compose run --rm app bin/console fleet-vehicle:fleet:register-vehicle "$2" "$3"
+    docker-compose down --remove-orphans
+    ;;
+
   *)
+
     echo "Unknown command '$ACTION'"
     ;;
 esac

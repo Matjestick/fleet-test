@@ -9,13 +9,13 @@ Feature: Park a vehicle
     And a vehicle
     And I have registered this vehicle into my fleet
 
-  @critical @fleetFixtures
+  @critical @fleetFixtures @vehicleFixtures
   Scenario: Successfully park a vehicle
     And a location
     When I park my vehicle at this location
     Then the known location of my vehicle should verify this location
 
-  @fleetFixtures
+  @fleetFixtures @vehicleFixtures
   Scenario: Can't localize my vehicle to the same location two times in a row
     And a location
     And my vehicle has been parked into this location

@@ -9,6 +9,7 @@
             <generator strategy="NONE"/>
         </id>
         <field name="fleets" type="simple_array" nullable="true"/>
+        <field name="plateNumber"/>
         <field name="latitude" type="decimal" precision="20" scale="16" nullable="true"/>
         <field name="longitude" type="decimal" precision="20" scale="16" nullable="true"/>
         <field name="altitude" type="decimal" precision="20" scale="16" nullable="true"/>
