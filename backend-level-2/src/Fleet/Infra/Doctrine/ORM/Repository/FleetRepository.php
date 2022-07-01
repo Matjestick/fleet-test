@@ -7,6 +7,7 @@ namespace FleetVehicle\Fleet\Infra\Doctrine\ORM\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FleetVehicle\Fleet\Domain\Exception\FleetNotFoundException;
+use FleetVehicle\Fleet\Domain\Exception\UserAlreadyHasFleet;
 use FleetVehicle\Fleet\Domain\Model\Fleet;
 use FleetVehicle\Fleet\Domain\Repository\FleetRepositoryInterface;
 use Symfony\Component\Uid\Uuid;
@@ -51,5 +52,18 @@ class FleetRepository implements FleetRepositoryInterface
     {
         $this->em->persist($fleet);
         $this->em->flush();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function create(Uuid $userId): Fleet
+    {
+        try {
+            $this->findByUser($userId);
+            throw new UserAlreadyHasFleet('User already has a fleet registered');
+        } catch (FleetNotFoundException) {
+            return new Fleet($userId);
+        }
     }
 }

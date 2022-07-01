@@ -1,0 +1,14 @@
+#!/bin/bash -eu
+set -o pipefail
+
+ACTION="$1"
+
+case $ACTION in
+  create)
+    docker-compose run --rm app bin/console fleet-vehicle:fleet:create "$2"
+    docker-compose down --remove-orphan
+    ;;
+  *)
+    echo "Unknown command '$ACTION'"
+    ;;
+esac

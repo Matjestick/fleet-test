@@ -25,4 +25,9 @@ final class FleetCommands
         $fleet->registerVehicle($vehicleId);
         $this->fleetRepository->persist($fleet);
     }
+
+    public function createFleet(Uuid $userId): void
+    {
+        $this->fleetRepository->persist($this->fleetRepository->create($userId));
+    }
 }

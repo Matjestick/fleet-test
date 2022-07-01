@@ -1,16 +1,15 @@
+include Makefile.qa.mk
+
 PROJECT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 DOCKER_COMPOSE=docker-compose -f $(PROJECT_DIR)/docker-compose.yaml
 DCR=$(DOCKER_COMPOSE) run --rm
+CONSOLE := $(DCR) app bin/console
 
 vendor: composer.json
-	docker-compose run --rm --no-deps app composer install
+	$(DCR) --no-deps app composer install
 down:
 	$(DOCKER_COMPOSE) down --remove-orphans
 run: down vendor
 	$(DOCKER_COMPOSE) up -d
 shell:
 	$(DCR) app bash
-behat: vendor
-	$(DCR) app vendor/bin/behat
-cloc:
-	docker run --rm -v $(PROJECT_DIR):/tmp aldanial/cloc --exclude-dir=vendor .
