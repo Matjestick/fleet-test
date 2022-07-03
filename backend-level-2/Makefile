@@ -10,6 +10,6 @@ vendor: composer.json
 down:
 	$(DOCKER_COMPOSE) down --remove-orphans
 run: down vendor
-	$(DOCKER_COMPOSE) up -d
+	$(DOCKER_COMPOSE) up -d app
 shell:
 	$(DCR) app bash
