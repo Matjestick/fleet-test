@@ -10,4 +10,4 @@ default:
             bootstrap: 'tests/bootstrap.php'
             kernel:
                 class: FleetVehicle\Kernel
-                environment: dev
+                environment: test

@@ -9,21 +9,35 @@ services:
         depends_on:
             database:
                 condition: service_healthy
+            database-test:
+                condition: service_healthy
 
 ###> doctrine/doctrine-bundle ###
     database:
         image: postgres:${POSTGRES_VERSION:-13}-alpine
-        env_file:
-            - .env
         environment:
-          POSTGRES_DB: ${POSTGRES_DB:-app}
+          POSTGRES_DB: app
           # You should definitely change the password in production
-          POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
-          POSTGRES_USER: ${POSTGRES_USER:-symfony}
+          POSTGRES_PASSWORD: ChangeMe
+          POSTGRES_USER: symfony
         volumes:
           - ./docker/db/data:/var/lib/postgresql/data:rw
         healthcheck:
-            test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-symfony}" ]
+            test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
+            timeout: 2s
+            retries: 5
+            interval: 5s
+    database-test:
+        image: postgres:${POSTGRES_VERSION:-13}-alpine
+        environment:
+            POSTGRES_DB: test
+            # You should definitely change the password in production
+            POSTGRES_PASSWORD: ChangeMe
+            POSTGRES_USER: symfony
+        volumes:
+            - ./docker/db-test/data:/var/lib/postgresql/data:rw
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
             timeout: 2s
             retries: 5
             interval: 5s
