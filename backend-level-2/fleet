@@ -3,16 +3,20 @@ set -o pipefail
 
 ACTION="$1"
 
+
 case $ACTION in
   create)
+    docker-compose run --rm app bin/console doc:mig:mig  --allow-no-migration --quiet
     docker-compose run --rm app bin/console fleet-vehicle:fleet:create "$2"
     docker-compose down --remove-orphans
     ;;
   register-vehicle)
+    docker-compose run --rm app bin/console doc:mig:mig  --allow-no-migration --quiet
     docker-compose run --rm app bin/console fleet-vehicle:fleet:register-vehicle "$2" "$3"
     docker-compose down --remove-orphans
     ;;
   localize-vehicle)
+    docker-compose run --rm app bin/console doc:mig:mig  --allow-no-migration --quiet
     docker-compose run --rm app bin/console fleet-vehicle:vehicle:park $2 $3 $4 $5 ${6-}
     docker-compose down --remove-orphans
     ;;
